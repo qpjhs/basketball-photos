@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>青埔國中籃球照片</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: transparent; font-family: Arial, "Microsoft JhengHei", sans-serif; }
+  .marquee { width: 100%; overflow: hidden; padding: 8px 0; }
+  .track {
+    display: flex;
+    width: max-content;
+    gap: 14px;
+    animation: scroll 32s linear infinite;
+  }
+  .marquee:hover .track { animation-play-state: paused; }
+  .photo {
+    width: 280px;
+    height: 190px;
+    flex: 0 0 auto;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+  }
+  @media (max-width: 600px) {
+    .photo { width: 220px; height: 150px; }
+  }
+  @keyframes scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+</style>
+</head>
+<body>
+<div class="marquee">
+  <div class="track" id="track"></div>
+</div>
+<script>
+const photos = [
+  "6.jpg",
+  "DSC_1920.jpeg",
+  "DSC_1926.jpeg",
+  "DSC_2001.jpeg"
+];
+
+const base = "https://raw.githubusercontent.com/qpjhs/basketball-photos/main/";
+const track = document.getElementById("track");
+
+// 放兩輪照片，讓跑馬燈可以無縫循環
+[...photos, ...photos].forEach(filename => {
+  const img = document.createElement("img");
+  img.className = "photo";
+  img.src = base + encodeURIComponent(filename);
+  img.alt = "青埔國中籃球比賽照片";
+  img.loading = "eager";
+  img.onerror = () => {
+    img.alt = "圖片載入失敗：" + filename;
+    img.style.background = "#ddd";
+  };
+  track.appendChild(img);
+});
+</script>
+</body>
+</html>
