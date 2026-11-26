@@ -1,0 +1,91 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=big5">
+<title>新增網頁1</title>
+</head>
+
+<body>
+<style>
+.marquee-box {
+  width: 100%;
+  overflow: hidden;
+  background: #111;
+  padding: 10px 0;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: scroll 25s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+.marquee-track a {
+  display: block;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.marquee-track img {
+  width: 260px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+</style>
+
+<div class="marquee-box">
+  <div class="marquee-track">
+
+    <a href="https://www.google.com" target="_blank">
+      <img src="S__8601631.jpg" width="960" height="1706">
+    </a>
+
+    <a href="https://www.youtube.com" target="_blank">
+      <img src="S__8601645.jpg" width="960" height="1706">
+    </a>
+
+    <a href="https://www.google.com" target="_blank">
+      <img src="S__48586755.jpg" width="1108" height="1477">
+    </a>
+
+    <a href="https://www.youtube.com" target="_blank">
+      <img src="S__9363474.jpg" width="1016" height="1611">
+    </a>
+
+    <!-- 複製一次圖片，讓跑馬燈循環 -->
+
+    <a href="https://www.google.com" target="_blank">
+      <img src="螢幕擷取畫面%202024-09-28%20163837.png" width="893" height="686">
+    </a>
+
+    <a href="https://www.youtube.com" target="_blank">
+      <img src="../../Pictures/Screenshots/1點.png" width="66" height="67">
+    </a>
+
+    <a href="https://www.google.com" target="_blank">
+      <img src="../../Pictures/Screenshots/2點.png" width="67" height="67">
+    </a>
+
+    <a href="https://www.youtube.com" target="_blank">
+      <img src="../../Pictures/Screenshots/3點.png" width="71" height="72">
+    </a>
+
+  </div>
+</div>
+</body>
+
+</html>
