@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>青埔國中籃球隊</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: white;
+    text-align: center;
+}
+
+h1 {
+    padding: 30px;
+    background: #222;
+}
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px;
+}
+
+.gallery img {
+    width: 90%;
+    max-width: 500px;
+    border-radius: 12px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>🏀 青埔國中籃球隊</h1>
+
+<div class="gallery">
+
+<img src="6.jpg">
+<img src="DSC_1920.jpeg">
+<img src="DSC_1926.jpeg">
+<img src="DSC_2001.jpeg">
+
+</div>
+
+</body>
+</html>
