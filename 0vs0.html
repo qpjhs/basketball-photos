@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>青埔國中籃球隊｜比分編輯器</title>
+<style>
+:root{--bg:#06111f;--panel:#0b1b2c;--line:#49627b;--white:#f7f9fc;--muted:#a9bacb;--blue:#1768e8;--red:#e21b1b}
+*{box-sizing:border-box}body{margin:0;background:#050d17;color:var(--white);font-family:Arial,"Noto Sans TC",sans-serif;padding:22px}
+.wrap{max-width:1180px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+h1{font-size:24px;margin:0}.sub{color:var(--muted);font-size:13px;margin-top:5px}
+button{border:1px solid #6d8299;background:#12263b;color:white;border-radius:9px;padding:10px 14px;font-weight:700;cursor:pointer}
+button.primary{background:#155fd1;border-color:#2878ed}button.danger{background:#5a1b24;border-color:#9b3947}button.stats{background:#174b3a;border-color:#27845f}
+.editor{background:#0a1726;border:1px solid #263d55;border-radius:14px;padding:16px;margin-bottom:20px}
+.editor h2{font-size:17px;margin:0 0 12px}.fields{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+label{display:block;color:#b9c9d8;font-size:12px;margin-bottom:5px}
+input,select{width:100%;min-width:0;background:#07111e;border:1px solid #3a536c;border-radius:8px;color:white;padding:10px;font-size:15px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.card{position:relative;min-width:0;border:1px solid #70859b;border-radius:15px;background:linear-gradient(145deg,#0d1d30,#050c16);padding:17px 15px 16px;box-shadow:inset 0 0 22px #142b43}
+.cardhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px}
+.matchdate{font-size:clamp(14px,1.6vw,20px);font-weight:800;overflow-wrap:anywhere}
+.status{background:var(--red);border-radius:20px;padding:5px 11px;font-size:12px;font-weight:900;white-space:nowrap}
+.matchtime{color:#b9c9d8;font-size:13px;font-weight:700;margin-top:-8px;margin-bottom:12px}
+.teams{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}
+.team{text-align:center;min-width:0}.logo{font-size:38px;line-height:1.2;display:flex;justify-content:center;align-items:center;height:58px}.logo img{width:58px;height:58px;object-fit:contain;border-radius:50%;background:#fff}.teamname{font-size:clamp(13px,1.5vw,18px);font-weight:800;margin-top:7px;overflow-wrap:anywhere}
+.score{font-size:clamp(30px,4vw,54px);font-weight:900;letter-spacing:1px;white-space:nowrap}
+.dash{font-size:24px;color:#b9c9d8;text-align:center}
+.empty{color:#9eb0c3;text-align:center;padding:30px;border:1px dashed #49627b;border-radius:12px;grid-column:1/-1}
+.note{color:#9eb0c3;font-size:12px;margin-top:14px;line-height:1.6}
+@media(max-width:850px){body{padding:12px}.fields{grid-template-columns:repeat(2,minmax(0,1fr))}.board{grid-template-columns:1fr}}
+@media(min-width:851px) and (max-width:1050px){.board{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media print{body{background:#fff;color:#111;padding:0}.top,.editor,.note,.card-actions{display:none!important}.board{grid-template-columns:repeat(3,1fr)}.card{background:#071321;color:white;break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div><h1>🏀 青埔國中籃球隊｜比分板</h1><div class="sub">編輯比賽資料，右側（下方）比分板會即時更新</div></div>
+    <div class="actions" style="margin:0">
+      <button onclick="window.print()">列印／另存 PDF</button>
+      <button class="primary" id="exportBtn">匯出資料備份</button>
+      <button id="importBtn">匯入備份</button>
+      <input type="file" id="importFile" accept="application/json" hidden>
+    </div>
+  </div>
+
+  <section class="editor">
+    <h2 id="formTitle">新增一場比賽</h2>
+    <div class="fields">
+      <div><label for="date">日期／賽事</label><input id="date" value="11/08 經國盃（7・8名之戰）"></div>
+      <div><label for="time">比賽時間（選填）</label><input id="time" type="time"></div>
+      <div><label for="home">主隊名稱</label><input id="home" value="青埔國中"></div>
+      <div><label for="homeLogo">主隊圖示／備用文字</label><input id="homeLogo" value="🐺"></div>
+      <div><label for="homeImage">主隊 LOGO 圖片（選填）</label><input id="homeImage" type="file" accept="image/*"></div>
+      <div><label for="homeScore">主隊分數</label><input id="homeScore" type="number" min="0" max="300" value="61"></div>
+      <div><label for="awayScore">客隊分數</label><input id="awayScore" type="number" min="0" max="300" value="54"></div>
+      <div><label for="awayLogo">客隊圖示／備用文字</label><input id="awayLogo" value="🐻"></div>
+      <div><label for="awayImage">客隊 LOGO 圖片（選填）</label><input id="awayImage" type="file" accept="image/*"></div>
+      <div><label for="away">客隊名稱</label><input id="away" value="大崗國中"></div>
+      <div><label for="status">比賽狀態</label><select id="status"><option>FINAL</option><option>LIVE</option><option>即將開賽</option></select></div>
+      <div style="grid-column:span 2"><label for="statsUrl">攻守數據連結（選填）</label><input id="statsUrl" type="url" placeholder="貼上該場比賽的攻守數據網址"></div>
+    </div>
+    <div class="actions">
+      <button class="primary" id="saveBtn">新增比分卡</button>
+      <button id="cancelBtn" hidden>取消編輯</button>
+      <button id="resetBtn">恢復範例資料</button>
+    </div>
+    <div class="note">點選下方任一張比分卡的「編輯」即可修改。每場比賽可設定自己的攻守數據網址；儲存後比分卡會出現「攻守數據」按鈕。可輸入 🐺、🏀 等符號，也可上傳 JPG／PNG 等 LOGO 圖片（每張小於 2 MB）。「下載圖檔」會輸出不含編輯、刪除按鈕的比分卡 PNG。資料會自動保存在目前這個瀏覽器；換裝置或清除瀏覽資料前，請先匯出備份。</div>
+  </section>
+
+  <div class="board" id="board" aria-live="polite"></div>
+</div>
+<script>
+const KEY='qingpu-scoreboard-v1';
+const samples=[
+ {date:'11/08 經國盃（7・8名之戰）',time:'08:00',home:'青埔國中',homeLogo:'🐺',homeScore:61,awayScore:54,awayLogo:'🐻',away:'大崗國中',status:'FINAL',statsUrl:''},
+ {date:'10/24 東風經國盃',time:'',home:'青埔國中',homeLogo:'🐺',homeScore:48,awayScore:55,awayLogo:'🐲',away:'文昌國中',status:'FINAL',statsUrl:''},
+ {date:'10/03 友誼賽',time:'',home:'青埔國中',homeLogo:'🐺',homeScore:72,awayScore:68,awayLogo:'🦅',away:'鶯歌國中',status:'FINAL',statsUrl:''}
+];
+let games=load(), editing=-1;
+const $=id=>document.getElementById(id);
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||samples.slice()}catch(e){return samples.slice()}}
+function persist(){localStorage.setItem(KEY,JSON.stringify(games))}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function render(){
+ const board=$('board');
+ if(!games.length){board.innerHTML='<div class="empty">目前沒有比分資料，請在上方新增一場比賽。</div>';return}
+ board.innerHTML=games.map((g,i)=>`<article class="card" id="card-${i}">
+  <div class="cardhead"><div class="matchdate">${esc(g.date)}</div><span class="status">${esc(g.status)}</span></div>
+  ${g.time?`<div class="matchtime">🕒 ${esc(g.time)}</div>`:''}
+  <div class="teams">
+   <div class="team"><div class="logo">${g.homeImage ? `<img src="${g.homeImage}" alt="${esc(g.home)} LOGO">` : esc(g.homeLogo||'🏀')}</div><div class="teamname">${esc(g.home)}</div></div>
+   <div><div class="score">${Number(g.homeScore)}<span class="dash"> - </span>${Number(g.awayScore)}</div></div>
+   <div class="team"><div class="logo">${g.awayImage ? `<img src="${g.awayImage}" alt="${esc(g.away)} LOGO">` : esc(g.awayLogo||'🏀')}</div><div class="teamname">${esc(g.away)}</div></div>
+  </div>
+  <div class="actions card-actions">
+    <button data-edit="${i}">編輯</button>
+    <button class="danger" data-del="${i}">刪除</button>
+    <button class="stats" data-stats="${i}">📊 攻守數據</button>
+    <button data-png="${i}">下載圖檔</button>
+  </div>
+ </article>`).join('');
+ board.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>edit(Number(b.dataset.edit))));
+ board.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{const i=Number(b.dataset.del);if(confirm('確定刪除這場比賽？')){games.splice(i,1);persist();render();if(editing===i)resetForm()}}));
+ board.querySelectorAll('[data-stats]').forEach(b=>b.addEventListener('click',()=>openStats(Number(b.dataset.stats))));
+ board.querySelectorAll('[data-png]').forEach(b=>b.addEventListener('click',()=>downloadCardPNG(Number(b.dataset.png))));
+}
+function openStats(i){
+ const url=(games[i].statsUrl||'').trim();
+ if(!url){alert('這場比賽尚未設定攻守數據連結。請按「編輯」，貼上攻守數據網址後儲存。');edit(i);return}
+ try{const parsed=new URL(url);if(!['http:','https:'].includes(parsed.protocol))throw Error();window.open(parsed.href,'_blank','noopener,noreferrer')}
+ catch(e){alert('攻守數據連結格式不正確，請使用 http:// 或 https:// 開頭的網址。')}
+}
+async function values(){
+ const v={};['date','time','home','homeLogo','homeScore','awayScore','awayLogo','away','status','statsUrl'].forEach(k=>v[k]=$(k).value.trim());
+ v.homeScore=Number(v.homeScore);v.awayScore=Number(v.awayScore);
+ const old=editing>=0?games[editing]:{};
+ v.homeImage=$('homeImage').files[0]?await readImage($('homeImage').files[0]):(old.homeImage||'');
+ v.awayImage=$('awayImage').files[0]?await readImage($('awayImage').files[0]):(old.awayImage||'');
+ return v
+}
+function readImage(file){return new Promise((resolve,reject)=>{if(!file){resolve('');return}if(file.size>2*1024*1024){reject(new Error('圖片請小於 2 MB'));return}const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
+function valid(v){
+ if(!v.date||!v.home||!v.away||!v.homeLogo||!v.awayLogo){alert('請填寫日期、兩隊名稱及圖示。');return false}
+ if(!Number.isInteger(v.homeScore)||!Number.isInteger(v.awayScore)||v.homeScore<0||v.awayScore<0||v.homeScore>300||v.awayScore>300){alert('分數請輸入 0～300 的整數。');return false}
+ if(v.statsUrl){try{const u=new URL(v.statsUrl);if(!['http:','https:'].includes(u.protocol))throw Error()}catch(e){alert('攻守數據連結請輸入正確的 http:// 或 https:// 網址。');return false}}
+ return true
+}
+function resetForm(){
+ editing=-1;$('formTitle').textContent='新增一場比賽';$('saveBtn').textContent='新增比分卡';$('cancelBtn').hidden=true;
+ ['date','time','home','homeLogo','homeScore','awayScore','awayLogo','away','statsUrl'].forEach(k=>$(k).value='');
+ $('homeImage').value='';$('awayImage').value='';$('status').value='FINAL'
+}
+function edit(i){
+ const g=games[i];editing=i;
+ ['date','time','home','homeLogo','homeScore','awayScore','awayLogo','away','status'].forEach(k=>$(k).value=g[k]??'');
+ $('statsUrl').value=g.statsUrl||'';$('homeImage').value='';$('awayImage').value='';
+ $('formTitle').textContent='編輯比賽資料';$('saveBtn').textContent='儲存修改';$('cancelBtn').hidden=false;window.scrollTo({top:0,behavior:'smooth'})
+}
+async function downloadCardPNG(i){
+ const g=games[i],canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
+ const W=1200,H=560;canvas.width=W;canvas.height=H;
+ const grad=ctx.createLinearGradient(0,0,W,H);grad.addColorStop(0,'#102943');grad.addColorStop(1,'#050c16');
+ ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+ ctx.strokeStyle='#829bb4';ctx.lineWidth=4;roundRect(ctx,12,12,W-24,H-24,30);ctx.stroke();
+ ctx.fillStyle='#f7f9fc';ctx.font='bold 46px Arial,"Noto Sans TC",sans-serif';ctx.textAlign='left';ctx.fillText(g.date||'比賽',48,90,850);
+ ctx.fillStyle='#e21b1b';roundRect(ctx,W-230,42,170,58,28);ctx.fill();
+ ctx.fillStyle='#fff';ctx.font='bold 27px Arial,sans-serif';ctx.textAlign='center';ctx.fillText(g.status||'',W-145,81);
+ if(g.time){ctx.fillStyle='#b9c9d8';ctx.font='bold 26px Arial,sans-serif';ctx.textAlign='left';ctx.fillText('🕒 '+g.time,50,140)}
+ const leftX=255,rightX=945,centerX=600,logoY=270;
+ await drawTeamLogo(ctx,g.homeImage,g.homeLogo||'🏀',leftX,logoY);
+ await drawTeamLogo(ctx,g.awayImage,g.awayLogo||'🏀',rightX,logoY);
+ ctx.fillStyle='#fff';ctx.font='bold 42px Arial,"Noto Sans TC",sans-serif';ctx.textAlign='center';
+ ctx.fillText(g.home||'主隊',leftX,390,400);ctx.fillText(g.away||'客隊',rightX,390,400);
+ ctx.font='bold 104px Arial,sans-serif';ctx.fillText(String(g.homeScore)+' - '+String(g.awayScore),centerX,315);
+ ctx.fillStyle='#b9c9d8';ctx.font='24px Arial,sans-serif';ctx.fillText('青埔國中籃球隊',centerX,490);
+ const a=document.createElement('a');a.download=`${safeName(g.date||'比賽')}_比分.png`;a.href=canvas.toDataURL('image/png');a.click();
+}
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function safeName(s){return String(s).replace(/[\\/:*?"<>|]/g,'_').slice(0,50)}
+function drawTeamLogo(ctx,src,emoji,x,y){
+ if(src){return new Promise(resolve=>{const im=new Image();im.onload=()=>{ctx.save();ctx.beginPath();ctx.arc(x,y,75,0,Math.PI*2);ctx.clip();ctx.fillStyle='#fff';ctx.fillRect(x-75,y-75,150,150);ctx.drawImage(im,x-70,y-70,140,140);ctx.restore();resolve()};im.onerror=()=>{drawEmoji(ctx,emoji,x,y);resolve()};im.src=src})}
+ drawEmoji(ctx,emoji,x,y);return Promise.resolve()
+}
+function drawEmoji(ctx,emoji,x,y){ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x,y,75,0,Math.PI*2);ctx.fill();ctx.font='100px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(emoji,x,y+4)}
+$('saveBtn').addEventListener('click',async()=>{try{const v=await values();if(!valid(v))return;if(editing<0)games.unshift(v);else games[editing]=v;persist();render();resetForm()}catch(err){alert(err.message||'圖片讀取失敗，請再試一次。')}});
+$('cancelBtn').addEventListener('click',resetForm);
+$('resetBtn').addEventListener('click',()=>{if(confirm('確定恢復成三場範例資料？目前資料會被取代。')){games=samples.map(x=>({...x}));persist();render();resetForm()}});
+$('exportBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(games,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='青埔籃球比分備份.json';a.click();URL.revokeObjectURL(a.href)});
+$('importBtn').addEventListener('click',()=>$('importFile').click());
+$('importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const data=JSON.parse(await f.text());if(!Array.isArray(data)||!data.every(g=>g.date&&g.home&&g.away&&Number.isFinite(Number(g.homeScore))&&Number.isFinite(Number(g.awayScore))))throw Error();games=data.slice(0,30);persist();render();resetForm();alert('備份匯入成功。')}catch(err){alert('檔案格式不正確，請選擇本工具匯出的 JSON 備份。')}e.target.value=''});
+render();
+</script>
+</body>
+</html>
